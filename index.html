@@ -1548,11 +1548,12 @@
             const val = document.getElementById('step18Input').value.trim();
             const hint = document.getElementById('step18Hint');
             const reversed = state.username.split('').reverse().join('');
+			nextStep();
             if (val === reversed) {
                 
             } else {
                 hint.textContent = '算了，给你过吧';
-		nextStep();
+				nextStep();
                 hint.className = 'hint-text red text-center';
             }
         }
