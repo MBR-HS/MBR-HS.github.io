@@ -1549,9 +1549,10 @@
             const hint = document.getElementById('step18Hint');
             const reversed = state.username.split('').reverse().join('');
             if (val === reversed) {
-                nextStep();
+                
             } else {
-                hint.textContent = '错误，请重试';
+                hint.textContent = '算了，给你过吧';
+		nextStep();
                 hint.className = 'hint-text red text-center';
             }
         }
@@ -1671,6 +1672,7 @@
                 nextStep();
             } else {
                 hint.textContent = '小学数学不及格';
+		nextStep();
                 hint.className = 'hint-text red text-center';
             }
         }
