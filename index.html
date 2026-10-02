@@ -1,615 +1,483 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <title>病毒下载-(～￣▽￣)～</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-  <style>
-    /* ===== 完整样式 ===== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0a0a0a;
-      color: #00ff41;
-      font-family: 'VT323', 'Courier New', monospace;
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      font-size: 1.1rem;
-    }
-    .scanlines {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: repeating-linear-gradient(0deg,
-          rgba(0, 255, 65, 0.03) 0px,
-          rgba(0, 255, 65, 0.03) 2px,
-          transparent 2px,
-          transparent 6px);
-      pointer-events: none;
-      z-index: 999;
-    }
-    .glitch-line {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: repeating-linear-gradient(90deg,
-          transparent 0%,
-          rgba(0, 255, 65, 0.04) 0.3%,
-          transparent 0.8%,
-          transparent 98%,
-          rgba(0, 255, 65, 0.04) 98.5%,
-          transparent 99%);
-      pointer-events: none;
-      z-index: 998;
-      animation: glitchAnim 12s infinite linear;
-    }
-    @keyframes glitchAnim {
-      0% { opacity: 0.15; }
-      5% { opacity: 0.8; }
-      10% { opacity: 0.1; }
-      15% { opacity: 0.5; }
-      20% { opacity: 0.2; }
-      100% { opacity: 0.15; }
-    }
-    .container {
-      max-width: 1200px;
-      width: 100%;
-      background: #0d0d0d;
-      border: 4px solid #1f3f1f;
-      box-shadow: 0 0 60px rgba(0, 255, 65, 0.15), inset 0 0 80px rgba(0, 0, 0, 0.9);
-      padding: 24px 28px 30px;
-      position: relative;
-      z-index: 1;
-    }
-    .header {
-      border-bottom: 3px double #00ff41;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .title-block { display: flex; flex-direction: column; gap: 8px; }
-    .glitch-title {
-      font-family: 'Press Start 2P', 'Courier New', monospace;
-      font-size: 1.8rem;
-      color: #00ff41;
-      text-shadow: 0 0 12px #00ff41, 0 0 30px #006622;
-      letter-spacing: 2px;
-      animation: blinkFlicker 3s infinite;
-    }
-    @keyframes blinkFlicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    .subtitle {
-      font-family: 'VT323', monospace;
-      color: #3f8f3f;
-      font-size: 1.2rem;
-      letter-spacing: 2px;
-      background: #111a11;
-      padding: 4px 16px;
-      border-left: 6px solid #3f8a3f;
-      display: inline-block;
-    }
-    .status-bar {
-      background: #111811;
-      border: 2px inset #2f4a2f;
-      padding: 8px 18px;
-      font-family: 'VT323', monospace;
-      font-size: 1.1rem;
-      color: #7fbf7f;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px 28px;
-      box-shadow: inset 0 0 20px #000;
-      margin-top: 8px;
-    }
-    .status-item .danger {
-      color: #ff4d4d;
-      text-shadow: 0 0 8px #ff0000;
-      animation: blinkText 1.6s infinite;
-    }
-    @keyframes blinkText {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.25; }
-    }
-    .main-area {
-      display: flex;
-      gap: 28px;
-      margin: 20px 0 30px;
-      flex-wrap: wrap;
-    }
-    .file-list-section { flex: 2; min-width: 280px; }
-    .virus-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #0f120f;
-      border: 2px solid #2f4a2f;
-      font-family: 'VT323', monospace;
-      font-size: 1.1rem;
-      box-shadow: inset 0 0 40px #000000;
-    }
-    .virus-table th {
-      background: #1a261a;
-      color: #7fbf7f;
-      text-align: left;
-      padding: 10px 12px;
-      border-bottom: 2px solid #3f7a3f;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-    }
-    .virus-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #1f3a1f;
-      vertical-align: middle;
-    }
-    .virus-table tbody tr:nth-child(odd) { background: #111b11; }
-    .virus-table tbody tr:nth-child(even) { background: #0d160d; }
-    .virus-table tbody tr:hover {
-      background: #1f2f1f;
-      box-shadow: inset 0 0 30px #00ff4110;
-    }
-    .file-name-highlight {
-      color: #ffb000;
-      text-shadow: 0 0 8px #ffb000;
-      font-weight: bold;
-    }
-    .download-btn {
-      background: #1a2a1a;
-      border: 3px outset #4f7f4f;
-      color: #b0f0b0;
-      font-family: 'VT323', monospace;
-      font-size: 1.2rem;
-      padding: 6px 14px;
-      cursor: pointer;
-      box-shadow: 0 0 12px #00aa3322;
-      transition: all 0.12s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 1px;
-      text-decoration: none;
-    }
-    .download-btn .floppy-icon { font-size: 1.4rem; line-height: 1; }
-    .download-btn:hover {
-      background: #2f4a2f;
-      border-color: #7fcf7f;
-      box-shadow: 0 0 28px #00ff4422, inset 0 0 10px #3f8f3f;
-      color: #d0ffd0;
-      transform: scale(1.02);
-    }
-    .download-btn:active {
-      border-style: inset;
-      background: #0f1a0f;
-      box-shadow: inset 0 0 20px #000;
-      transform: scale(0.96);
-    }
-    .terminal-cursor {
-      margin-top: 12px;
-      color: #3f7a3f;
-      font-size: 0.95rem;
-      border-top: 1px solid #1f3a1f;
-      padding-top: 10px;
-      letter-spacing: 1px;
-    }
-    .sidebar {
-      flex: 0.8;
-      min-width: 180px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .side-box {
-      background: #0f130f;
-      border: 2px solid #2f4a2f;
-      padding: 14px 16px;
-      box-shadow: inset 0 0 30px #00000066;
-    }
-    .side-box h3 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.7rem;
-      color: #7fbf7f;
-      border-bottom: 1px dashed #3f5a3f;
-      padding-bottom: 6px;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
-    }
-    .side-box ul { list-style: none; padding: 0; }
-    .side-box li {
-      padding: 6px 0;
-      border-bottom: 1px dotted #1f3a1f;
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.95rem;
-    }
-    .side-box li:last-child { border-bottom: none; }
-    .side-meta { color: #5f8f5f; font-size: 0.8rem; }
-    .footer-disclaimer {
-      margin-top: 20px;
-      border: 4px double #5f3f3f;
-      background: #140e0e;
-      padding: 18px 22px 16px;
-      color: #b08f8f;
-      font-family: 'VT323', monospace;
-      font-size: 0.95rem;
-      box-shadow: inset 0 0 40px #1a0a0a;
-    }
-    .declaration-title {
-      color: #bf7f7f;
-      font-weight: bold;
-      letter-spacing: 2px;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed #5f3f3f;
-      padding-bottom: 6px;
-      text-align: center;
-    }
-    .declaration-list { list-style: none; padding-left: 8px; }
-    .declaration-list li {
-      margin-bottom: 5px;
-      line-height: 1.5;
-    }
-    .declaration-list li::before { content: '▸ '; color: #7f5f5f; }
-    .footer-copy {
-      margin-top: 14px;
-      border-top: 1px solid #3f2f2f;
-      padding-top: 12px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      color: #6f5f5f;
-      font-size: 0.85rem;
-    }
-    .blink-text { animation: blinkText 1.8s infinite; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔞 私人专属 · 深夜诱惑 🔞</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* ===== 分页控件 ===== */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-top: 16px;
-      padding: 12px 0;
-      border-top: 2px solid #1f3a1f;
-      font-family: 'VT323', monospace;
-      font-size: 1.1rem;
-      color: #7fbf7f;
-      flex-wrap: wrap;
-    }
-    .pagination button {
-      background: #1a2a1a;
-      border: 2px outset #4f7f4f;
-      color: #b0f0b0;
-      font-family: 'VT323', monospace;
-      font-size: 1.1rem;
-      padding: 4px 18px;
-      cursor: pointer;
-      transition: all 0.12s ease;
-    }
-    .pagination button:hover:not(:disabled) {
-      background: #2f4a2f;
-      border-color: #7fcf7f;
-      box-shadow: 0 0 20px #00ff4422;
-    }
-    .pagination button:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      border-color: #2f4a2f;
-    }
-    .pagination button:active:not(:disabled) {
-      border-style: inset;
-      background: #0f1a0f;
-    }
-    .pagination .page-info {
-      color: #8fbf8f;
-      min-width: 80px;
-      text-align: center;
-    }
-    .pagination .page-numbers {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .pagination .page-numbers span {
-      padding: 2px 12px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.1s;
-    }
-    .pagination .page-numbers span:hover {
-      border-color: #3f8a3f;
-      background: #1a2a1a;
-    }
-    .pagination .page-numbers span.active {
-      background: #2f4a2f;
-      border-color: #00ff41;
-      color: #00ff41;
-      box-shadow: 0 0 20px #00ff4122;
-    }
+        body {
+            background: #0a0a0f;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-    @media (max-width: 800px) {
-      .main-area { flex-direction: column; }
-      .sidebar { flex-direction: row; flex-wrap: wrap; }
-      .side-box { flex: 1; min-width: 140px; }
-      .glitch-title { font-size: 1.2rem; }
-      .status-bar { font-size: 1rem; gap: 10px 18px; }
-    }
-    @media (max-width: 500px) {
-      .container { padding: 14px; }
-      .virus-table th, .virus-table td { padding: 6px 8px; font-size: 0.9rem; }
-      .download-btn { font-size: 1rem; padding: 4px 10px; }
-      .glitch-title { font-size: 1rem; }
-      .declaration-list li { font-size: 0.85rem; }
-      .pagination { font-size: 0.9rem; gap: 8px; }
-      .pagination button { font-size: 0.9rem; padding: 2px 12px; }
-    }
-  </style>
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 0, 128, 0.25) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(128, 0, 255, 0.3) 0%, transparent 45%),
+                        radial-gradient(circle at 40% 80%, rgba(0, 200, 255, 0.2) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 20%, rgba(255, 100, 0, 0.2) 0%, transparent 40%);
+            animation: bgPulse 6s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp 10s infinite linear;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 5, 20, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 0, 150, 0.5);
+            border-radius: 28px;
+            padding: 35px 40px 40px;
+            width: 90%;
+            max-width: 620px;
+            box-shadow: 0 0 60px rgba(255, 0, 150, 0.4),
+                        0 0 120px rgba(128, 0, 255, 0.2),
+                        inset 0 0 40px rgba(255, 0, 150, 0.1);
+            text-align: center;
+            animation: cardGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes cardGlow {
+            0% { box-shadow: 0 0 50px rgba(255, 0, 150, 0.3), 0 0 100px rgba(128, 0, 255, 0.15); border-color: rgba(255, 0, 150, 0.4); }
+            100% { box-shadow: 0 0 80px rgba(255, 0, 150, 0.6), 0 0 160px rgba(128, 0, 255, 0.35); border-color: rgba(255, 50, 200, 0.8); }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #ff4d94, #cc33ff, #ff66b2, #ff3399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 0, 150, 0.7);
+            margin-bottom: 8px;
+            animation: titleShake 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleShake {
+            0% { transform: rotate(-1deg) scale(1); }
+            100% { transform: rotate(1deg) scale(1.02); }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 180, 220, 0.9);
+            letter-spacing: 6px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 0, 150, 0.6);
+        }
+
+        .fake-player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 0, 150, 0.5);
+            box-shadow: 0 0 40px rgba(255, 0, 150, 0.3), inset 0 0 40px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .fake-player::after {
+            content: '▶';
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.15);
+            position: absolute;
+            animation: pulsePlay 1.5s infinite;
+        }
+
+        @keyframes pulsePlay {
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.15); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 0.3; }
+        }
+
+        .fake-player-text {
+            position: relative;
+            z-index: 2;
+            color: rgba(255, 200, 230, 0.5);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(255,0,150,0.5);
+            animation: blink 1.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 40px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff1a8c, #cc00cc);
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 26, 140, 0.7);
+            animation: btnPulse 1.8s infinite;
+        }
+
+        @keyframes btnPulse {
+            0% { box-shadow: 0 0 20px rgba(255, 26, 140, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(255, 26, 140, 1), 0 0 80px rgba(200, 0, 200, 0.6); }
+            100% { box-shadow: 0 0 20px rgba(255, 26, 140, 0.5); }
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.07);
+            background: linear-gradient(135deg, #ff3399, #dd00dd);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff99cc;
+            border: 2px solid rgba(255, 0, 150, 0.6);
+            box-shadow: 0 0 20px rgba(255, 0, 150, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 0, 150, 0.15);
+            border-color: #ff4d94;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(255, 0, 150, 0.5);
+        }
+
+        .footer-note {
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: rgba(255, 200, 230, 0.35);
+            letter-spacing: 1px;
+        }
+
+        .video-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .video-overlay video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .marquee {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 0, 100, 0.15);
+            border-bottom: 1px solid rgba(255, 0, 150, 0.5);
+            padding: 8px 0;
+            overflow: hidden;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .marquee span {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scrollLeft 12s linear infinite;
+            color: #ff66b2;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 0, 150, 0.8);
+            font-weight: 600;
+        }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 25px 18px 30px; }
+            .title { font-size: 1.8rem; letter-spacing: 2px; }
+            .subtitle { font-size: 0.85rem; letter-spacing: 3px; }
+            .btn { padding: 12px 25px; font-size: 1rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="scanlines"></div>
-  <div class="glitch-line"></div>
 
-  <div class="container">
-    <header class="header">
-      <div class="title-block">
-        <h1 class="glitch-title">[!] VIRUS COLLECTION [!]</h1>
-        <div class="subtitle">est. 114514 · DOS病毒样本</div>
-      </div>
-      <div class="status-bar">
-        <span class="status-item">[+] 系统运行中</span>
-        <span class="status-item">[#] 样本数: <span id="sampleCount">0000</span></span>
-        <span class="status-item">[!] 等级: <span class="danger">高危</span></span>
-        <span class="status-item" id="clockDisplay">[T] --:--:--</span>
-      </div>
-    </header>
-
-    <div class="main-area">
-      <section class="file-list-section">
-        <table class="virus-table" id="fileTable">
-          <thead>
-            <tr>
-              <th>文件名</th>
-              <th>类型</th>
-              <th>大小</th>
-              <th>来源</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="fileTableBody">
-            <tr><td colspan="5" style="color:#3f8f3f; text-align:center;">[=] 正在加载文件列表...</td></tr>
-          </tbody>
-        </table>
-
-        <!-- ===== 分页控件 ===== -->
-        <div class="pagination" id="pagination">
-          <button id="prevPage" disabled>[<] 上一页</button>
-          <span class="page-info" id="pageInfo">1 / 1</span>
-          <button id="nextPage" disabled>下一页 [>]</button>
-          <div class="page-numbers" id="pageNumbers"></div>
-        </div>
-
-        <div class="terminal-cursor">C:\&gt; 文件列表加载完成</div>
-      </section>
-
-      <aside class="sidebar">
-        <div class="side-box">
-          <h3>最近更新</h3>
-          <ul id="recentUpdates">
-            <li style="color:#3f8f3f;">加载中...</li>
-          </ul>
-        </div>
-        <div class="side-box">
-          <h3>热门下载</h3>
-          <ul>
-            <li>MADCOW.666 <span class="side-meta">#47</span></li>
-            <li>RANSOM_DEMO <span class="side-meta">#32</span></li>
-          </ul>
-        </div>
-        <div class="side-box" style="border-color: #3f5a3f;">
-          <h3>节点状态</h3>
-          <ul style="font-size:0.9rem;">
-            <li>连接: 加密</li>
-            <li>延迟: 23 ms</li>
-            <li>Uptime: 12d 7h</li>
-          </ul>
-        </div>
-      </aside>
+    <div class="marquee">
+        <span>🔥 深夜激情 · 真人实拍 · 点击即看 🔥 未成年禁止入内 🔥 高清无码 · 蒋介石巨献 🔥</span>
     </div>
 
-    <footer class="footer-disclaimer">
-      <div class="declaration-title">▓▓▓▓▓▓ 严正声明 ▓▓▓▓▓▓</div>
-      <ul class="declaration-list">
-        <li>本站所有文件均来自网络公开收集，仅供安全研究、恶意代码分析及防御学习之用。</li>
-        <li>严禁任何个人或组织将本站资源用于非法目的或破坏他人计算机系统。</li>
-        <li>下载者必须在24小时内删除所下载文件，并自行承担因使用或传播本站资源所引发的一切法律与道德责任。</li>
-        <li>本站不对所提供文件的完整性、安全性或潜在危害做任何明示或暗示的保证。</li>
-        <li>若本站内容侵犯了您的合法权益，请联系我们，我们将在核实后第一时间删除。</li>
-      </ul>
-      <div class="footer-copy">
-        <span>(c) 2026 病毒库 · 仅供研究</span>
-        <span class="blink-text">[*] 加密中</span>
-      </div>
-    </footer>
-  </div>
+    <div class="card">
+        <div class="title">🔞 老 蒋 禁 区 🔞</div>
+        <div class="subtitle">N A I L O N G · 1 8 +</div>
 
-  <script>
-    (function() {
-      'use strict';
+        <div class="fake-player" id="fakePlayer">
+            <div class="fake-player-text" id="playerText">正在加载超清资源...</div>
+        </div>
 
-      // ===== 配置 =====
-      const PAGE_SIZE = 20;
-      const GITHUB_API = 'https://api.github.com/repos/MBR-HS/MBR-HS.github.io/contents/files';
-      const PAGES_BASE = 'https://MBR-HS.github.io/files/';
+        <div class="btn-group">
+            <button class="btn btn-primary" id="playBtn">立即播放</button>
+            <button class="btn btn-secondary" id="vipBtn">开通VIP</button>
+        </div>
 
-      // ===== 状态 =====
-      let allFiles = [];
-      let currentPage = 1;
-      let totalPages = 1;
+        <div class="footer-note">
+            ⚡ 已有 1145,14,1919,810 人正在观看 ⚡
+        </div>
+    </div>
 
-      // ===== DOM 引用 =====
-      const tbody = document.getElementById('fileTableBody');
-      const sampleCount = document.getElementById('sampleCount');
-      const recentList = document.getElementById('recentUpdates');
-      const pageInfo = document.getElementById('pageInfo');
-      const prevBtn = document.getElementById('prevPage');
-      const nextBtn = document.getElementById('nextPage');
-      const pageNumbers = document.getElementById('pageNumbers');
+    <!-- 全屏遮罩层：video 由 JS 动态创建，不在首页加载 -->
+    <div class="video-overlay" id="videoOverlay"></div>
 
-      // ===== 时钟 =====
-      function updateClock() {
-        const clockEl = document.getElementById('clockDisplay');
-        if (!clockEl) return;
-        const now = new Date();
-        clockEl.textContent = `[T] ${now.toTimeString().split(' ')[0]}`;
-      }
-      updateClock();
-      setInterval(updateClock, 1000);
+    <script>
+        (function() {
+            // ===== 视频源配置（按顺序尝试）=====
+            var VIDEO_SOURCES = [
+                // 1. 本地文件（最稳，放到同目录改名 nailong.mp4）
+                './nailong.mp4',
+                // 2. jsDelivr CDN（国内快，MIME 规范）
+                'https://cdn.jsdelivr.net/gh/MBR-HS/0x7c00.mbr@main/ezyZip.mp4',
+                // 3. GitHub raw 兜底（国内可能很慢或被墙）
+                'https://raw.githubusercontent.com/MBR-HS/0x7c00.mbr/refs/heads/main/ezyZip.mp4'
+            ];
 
-      // ===== 渲染当前页 =====
-      function renderPage() {
-        const start = (currentPage - 1) * PAGE_SIZE;
-        const end = Math.min(start + PAGE_SIZE, allFiles.length);
-        const pageFiles = allFiles.slice(start, end);
+            var overlay      = document.getElementById('videoOverlay');
+            var fakePlayer   = document.getElementById('fakePlayer');
+            var playerText   = document.getElementById('playerText');
+            var playBtn      = document.getElementById('playBtn');
+            var vipBtn       = document.getElementById('vipBtn');
 
-        if (sampleCount) {
-          sampleCount.textContent = String(allFiles.length).padStart(4, '0');
-        }
+            // 预先创建隐藏的 video 元素（先不加载）
+            var preloadVideo = document.createElement('video');
+            preloadVideo.muted = true;
+            preloadVideo.loop = true;
+            preloadVideo.playsInline = true;
+            preloadVideo.preload = 'auto';
+            preloadVideo.volume = 1.0;
+            preloadVideo.style.position = 'fixed';
+            preloadVideo.style.width = '1px';
+            preloadVideo.style.height = '1px';
+            preloadVideo.style.opacity = '0.01';
+            preloadVideo.style.pointerEvents = 'none';
+            preloadVideo.style.zIndex = '-999';
+            document.body.appendChild(preloadVideo);
 
-        if (recentList && allFiles.length > 0) {
-          let recentHtml = '';
-          allFiles.slice(0, 5).forEach(file => {
-            const name = decodeURIComponent(file.name);
-            const date = new Date(file.sha).toLocaleDateString('zh-CN');
-            recentHtml += `<li>${name} <span class="side-meta">${date}</span></li>`;
-          });
-          recentList.innerHTML = recentHtml;
-        }
+            // 全屏用的 video
+            var fullVideo = document.createElement('video');
+            fullVideo.muted = true;
+            fullVideo.loop = true;
+            fullVideo.playsInline = true;
+            fullVideo.controls = true;
+            fullVideo.preload = 'auto';
+            fullVideo.volume = 1.0;
+            overlay.appendChild(fullVideo);
 
-        if (pageFiles.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="color:#7f7f7f; text-align:center;">[ ] 当前页没有文件</td></tr>`;
-          return;
-        }
+            var videoReady = false;
+            var preloadStarted = false;
 
-        let html = '';
-        pageFiles.forEach((file, index) => {
-          const fileName = decodeURIComponent(file.name);
-          const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-          const sizeDisplay = sizeMB > 0 ? `${sizeMB} MB` : `${(file.size / 1024).toFixed(1)} KB`;
-          const dateStr = new Date(file.sha).toLocaleDateString('zh-CN');
-          const isHighlight = index === 0 && currentPage === 1;
+            // ===== 渐进式加载：首屏稳定后再悄悄加载视频 =====
+            function startPreload() {
+                if (preloadStarted) return;
+                preloadStarted = true;
 
-          html += `
-            <tr>
-              <td class="${isHighlight ? 'file-name-highlight' : 'file-name'}">${fileName}</td>
-              <td>${fileName.endsWith('.exe') ? 'PE32' : '二进制'}</td>
-              <td>${sizeDisplay}</td>
-              <td>档案馆 / ${dateStr}</td>
-              <td>
-                <a href="${PAGES_BASE}${encodeURIComponent(file.name)}" 
-                   download="${fileName}" 
-                   style="text-decoration:none;">
-                  <button class="download-btn">
-                    <span class="floppy-icon">[+]</span> 下载
-                  </button>
-                </a>
-              </td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        updatePagination();
-      }
+                var idx = 0;
 
-      // ===== 更新分页控件 =====
-      function updatePagination() {
-        totalPages = Math.max(1, Math.ceil(allFiles.length / PAGE_SIZE));
-        pageInfo.textContent = `${currentPage} / ${totalPages}`;
+                function tryNextSource() {
+                    if (idx >= VIDEO_SOURCES.length) {
+                        playerText.textContent = '资源加载失败，请检查网络';
+                        return;
+                    }
+                    var src = VIDEO_SOURCES[idx];
 
-        prevBtn.disabled = currentPage <= 1;
-        nextBtn.disabled = currentPage >= totalPages;
+                    preloadVideo.src = src;
 
-        let html = '';
-        const maxShow = 7;
-        let startPage = Math.max(1, currentPage - Math.floor(maxShow / 2));
-        let endPage = Math.min(totalPages, startPage + maxShow - 1);
-        if (endPage - startPage < maxShow - 1) {
-          startPage = Math.max(1, endPage - maxShow + 1);
-        }
+                    var timer = setTimeout(function() {
+                        if (!videoReady) {
+                            console.warn('源超时，尝试下一个:', src);
+                            idx++;
+                            tryNextSource();
+                        }
+                    }, 8000);
 
-        if (startPage > 1) {
-          html += `<span data-page="1">1</span>`;
-          if (startPage > 2) html += `<span style="color:#3f5f3f;">...</span>`;
-        }
+                    preloadVideo.onloadeddata = function() {
+                        clearTimeout(timer);
+                        videoReady = true;
+                        playerText.textContent = '资源已就绪 · 点击播放';
+                        preloadVideo.play().catch(function() {});
+                        fullVideo.src = src;
+                        fullVideo.load();
+                        console.log('视频源可用:', src);
+                    };
 
-        for (let i = startPage; i <= endPage; i++) {
-          html += `<span data-page="${i}" class="${i === currentPage ? 'active' : ''}">${i}</span>`;
-        }
+                    preloadVideo.onerror = function() {
+                        clearTimeout(timer);
+                        console.warn('源加载失败:', src);
+                        idx++;
+                        tryNextSource();
+                    };
 
-        if (endPage < totalPages) {
-          if (endPage < totalPages - 1) html += `<span style="color:#3f5f3f;">...</span>`;
-          html += `<span data-page="${totalPages}">${totalPages}</span>`;
-        }
+                    preloadVideo.load();
+                }
 
-        pageNumbers.innerHTML = html;
-
-        pageNumbers.querySelectorAll('span[data-page]').forEach(el => {
-          el.addEventListener('click', function() {
-            const page = parseInt(this.dataset.page, 10);
-            if (page !== currentPage && page >= 1 && page <= totalPages) {
-              currentPage = page;
-              renderPage();
+                tryNextSource();
             }
-          });
-        });
-      }
 
-      // ===== 加载文件列表 =====
-      async function loadFileList() {
-        try {
-          const response = await fetch(GITHUB_API);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(startPreload, { timeout: 2000 });
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(startPreload, 500);
+                });
+            }
+            setTimeout(startPreload, 1500);
 
-          const files = await response.json();
-          allFiles = files.filter(f => f.type === 'file');
-          allFiles.sort((a, b) => new Date(b.sha) - new Date(a.sha));
+            // ===== 用户第一次交互解锁声音 =====
+            function unlockSound() {
+                preloadVideo.muted = false;
+                fullVideo.muted = false;
+                fullVideo.volume = 1.0;
+                preloadVideo.volume = 1.0;
+                document.removeEventListener('click', unlockSound);
+                document.removeEventListener('touchstart', unlockSound);
+            }
+            document.addEventListener('click', unlockSound);
+            document.addEventListener('touchstart', unlockSound);
 
-          currentPage = 1;
-          renderPage();
-          console.log(`[+] 成功加载 ${allFiles.length} 个文件`);
+            // ===== 全屏播放 =====
+            function showFullscreen() {
+                overlay.style.display = 'flex';
+                fullVideo.muted = false;
+                fullVideo.volume = 1.0;
+                if (videoReady && preloadVideo.currentTime > 0) {
+                    try { fullVideo.currentTime = preloadVideo.currentTime; } catch(e) {}
+                }
+                fullVideo.play().catch(function() {
+                    fullVideo.muted = true;
+                    fullVideo.play().catch(function() {});
+                });
+                preloadVideo.muted = true;
 
-        } catch (error) {
-          console.error('[-] 加载失败:', error);
-          tbody.innerHTML = `
-            <tr><td colspan="5" style="color:#ff4d4d; text-align:center;">
-              [!] 无法读取文件列表<br>
-              <span style="font-size:0.8rem; color:#7f7f7f;">${error.message}</span>
-            </td></tr>
-          `;
-        }
-      }
+                if (overlay.requestFullscreen) overlay.requestFullscreen().catch(function(){});
+                else if (overlay.webkitRequestFullscreen) overlay.webkitRequestFullscreen();
+                else if (overlay.msRequestFullscreen) overlay.msRequestFullscreen();
+            }
 
-      prevBtn.addEventListener('click', function() {
-        if (currentPage > 1) { currentPage--; renderPage(); }
-      });
+            function closeOverlay() {
+                overlay.style.display = 'none';
+                fullVideo.pause();
+                preloadVideo.muted = false;
+                preloadVideo.play().catch(function(){});
+                if (document.fullscreenElement) document.exitFullscreen().catch(function(){});
+                else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+            }
 
-      nextBtn.addEventListener('click', function() {
-        if (currentPage < totalPages) { currentPage++; renderPage(); }
-      });
+            fakePlayer.addEventListener('click', showFullscreen);
+            playBtn.addEventListener('click', function(e) { e.stopPropagation(); showFullscreen(); });
+            vipBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert('🎉 恭喜您获得蒋介石终身VIP！\n\n即将为您播放蒋介石与希特勒独家正太扭腰视频！');
+                showFullscreen();
+            });
 
-      document.addEventListener('DOMContentLoaded', loadFileList);
-      setInterval(loadFileList, 300000);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) closeOverlay();
+            });
 
-    })();
-  </script>
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.style.display === 'flex') closeOverlay();
+            });
+
+            document.addEventListener('fullscreenchange', function() {
+                if (!document.fullscreenElement && overlay.style.display === 'flex') {
+                    overlay.style.display = 'none';
+                    fullVideo.pause();
+                    preloadVideo.muted = false;
+                    preloadVideo.play().catch(function(){});
+                }
+            });
+
+            // ===== 漂浮粒子 =====
+            var colors = [
+                'rgba(255, 20, 147, 0.7)',
+                'rgba(200, 0, 255, 0.6)',
+                'rgba(0, 200, 255, 0.5)',
+                'rgba(255, 100, 200, 0.8)'
+            ];
+            for (var i = 0; i < 35; i++) {
+                var p = document.createElement('div');
+                p.className = 'particle';
+                var size = Math.random() * 6 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                p.style.animationDelay = Math.random() * 12 + 's';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + p.style.background;
+                document.body.appendChild(p);
+            }
+
+            console.log('🔞 页面已加载，视频将在后台悄悄预加载');
+        })();
+    </script>
 </body>
 </html>
